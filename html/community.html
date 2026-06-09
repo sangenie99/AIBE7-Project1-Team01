@@ -630,6 +630,16 @@
         return categoryMap[category] || "";
       };
 
+      // 카테고리별 기본 이미지 반환 함수 (추가됨)
+      function getCategoryImage(category) {
+        const imageMap = {
+          "여행 리뷰": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600",
+          "여행 꿀팁": "https://images.unsplash.com/photo-1448375240586-882707db888b?w=600",
+          "질문 하기": "https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?w=600"
+        };
+        return imageMap[category] || "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600";
+      }
+
       // 현재 로그인 유저 ID 캐시
       let currentUserId = null;
 

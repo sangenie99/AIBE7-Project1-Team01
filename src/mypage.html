@@ -4,32 +4,26 @@
     <meta charset="UTF-8">
     <title>마이페이지</title>
     <script>
-        // 페이지가 로드되자마자 실행하여 비로그인 사용자의 화면 노출을 최소화합니다.
         window.addEventListener('DOMContentLoaded', () => {
-            // 로컬 스토리지에서 로그인 토큰이나 유저 정보를 가져옴 (실제 서비스에선 JWT 등을 저장)
             const token = localStorage.getItem('loginToken');
 
             if (!token) {
-                // 토큰이 없으면 로그인 안 된 상태
                 alert('로그인이 필요한 페이지입니다. 로그인 페이지로 이동합니다.');
-                window.location.href = '/login.html'; // 로그인 페이지로 리다이렉트
+                window.location.href = 'login.html';
             } else {
-                // 로그인 된 상태라면 마이페이지 콘텐츠를 보여줌
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('content').style.display = 'block';
-                
-                // 유저 이름 표시 예시
+
                 const userName = localStorage.getItem('userName') || '회원';
                 document.getElementById('user-name').innerText = userName;
             }
         });
 
         function logout() {
-            // 로그아웃 시 스토리지 비우고 이동
             localStorage.removeItem('loginToken');
             localStorage.removeItem('userName');
             alert('로그아웃 되었습니다.');
-            window.location.href = '/login.html';
+            window.location.href = 'login.html';
         }
     </script>
     <style>

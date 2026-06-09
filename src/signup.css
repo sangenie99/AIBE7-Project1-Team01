@@ -15,6 +15,13 @@ body {
   color: var(--brand-text);
 }
 
+.brand-logo {
+  width: 2.5rem;
+  height: 2.5rem;
+  object-fit: contain;
+  display: block;
+}
+
 .glass-nav {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px);

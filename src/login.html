@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>로그인 | MOTIP</title>
+    <link rel="icon" type="image/png" href="../asset/icons/screen.png" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -17,10 +18,14 @@
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap"
       rel="stylesheet"
     />
+    <script src="config.js"></script>
   </head>
   <body>
     <main class="login-shell">
       <section class="login-visual d-none d-md-flex">
+        <a class="login-brand-mark" href="main.html" aria-label="main page">
+          <img src="../asset/icons/screen.png" alt="MOTIPE 로고" class="login-brand-logo" />
+        </a>
         <img
           alt="Sunset over a peaceful beach"
           class="login-visual-image"
@@ -28,7 +33,7 @@
         />
         <div class="login-visual-overlay"></div>
         <div class="login-visual-copy">
-          <h1>MOTIPE<br />Travel</h1>
+          <h1>MOTIPE<br /></h1>
           <p>
             세상의 소음에서 벗어나, <br />노을 아래 평온한 여정을 시작하세요.
           </p>
@@ -41,8 +46,10 @@
 
       <section class="login-panel">
         <div class="login-panel-inner">
-          <div class="text-center d-md-none mb-4">
-            <h1 class="login-mobile-brand">Sunset Glow Travel</h1>
+        <div class="text-center d-md-none mb-4">
+            <a class="login-mobile-brand-link" href="main.html" aria-label="main page">
+              <img src="../asset/icons/screen.png" alt="MOTIPE 로고" class="login-mobile-brand" />
+            </a>
           </div>
 
           <div class="mb-4">
@@ -103,18 +110,68 @@
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-client.js"></script>
+
     <script>
-      document.getElementById("login-form").addEventListener("submit", function (e) {
+      const form = document.querySelector("#login-form");
+      const submitButton = form.querySelector("button[type='submit']");
+      const emailInput = form.querySelector("#email");
+      const passwordInput = form.querySelector("#password");
+
+      function setButtonState(disabled, label) {
+        submitButton.disabled = disabled;
+        submitButton.innerHTML = label;
+      }
+
+      form.addEventListener("submit", async function (e) {
         e.preventDefault();
-        const button = e.target.querySelector("button[type='submit']");
-        const original = button.innerHTML;
-        button.disabled = true;
-        button.innerHTML =
-          '<span class="material-symbols-outlined align-middle login-spinner">progress_activity</span> 준비 중...';
-        setTimeout(() => {
-          button.innerHTML = original;
-          button.disabled = false;
-        }, 2000);
+
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+        const client = window.getSupabaseClient ? window.getSupabaseClient() : null;
+
+        if (!email || !password) {
+          alert("이메일과 비밀번호를 입력해 주세요.");
+          return;
+        }
+
+        if (!client) {
+          alert(
+            "Supabase 설정이 필요합니다. `npm start`로 서버를 실행한 뒤 http://localhost:3000/login.html 로 접속하고, .env의 `SUPABASE_URL`과 `SUPABASE_ANON_KEY`를 확인해 주세요."
+          );
+          return;
+        }
+
+        const original = submitButton.innerHTML;
+        setButtonState(
+          true,
+          '<span class="material-symbols-outlined align-middle login-spinner">progress_activity</span> 로그인 중...'
+        );
+
+        try {
+          const { data, error } = await client.auth.signInWithPassword({
+            email,
+            password,
+          });
+          
+          if (error) {
+            throw error;
+          }
+
+          localStorage.setItem("loginToken", data.session?.access_token || "");
+          localStorage.setItem(
+            "userName",
+            data.user?.user_metadata?.full_name || data.user?.email?.split("@")[0] || "회원"
+          );
+
+          alert("로그인되었습니다.");
+          window.location.href = "main.html";
+        } catch (error) {
+          alert(error.message || "로그인에 실패했습니다.");
+        } finally {
+          setButtonState(false, original);
+        }
       });
     </script>
   </body>

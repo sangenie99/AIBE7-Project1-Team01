@@ -15,6 +15,27 @@ body {
   color: var(--brand-text);
 }
 
+.login-brand-mark {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+}
+
+.login-brand-logo,
+.login-mobile-brand {
+  width: 2.5rem;
+  height: 2.5rem;
+  object-fit: contain;
+}
+
+.login-mobile-brand-link {
+  display: inline-flex;
+  align-items: center;
+}
+
 .login-shell {
   min-height: 100vh;
   display: flex;
@@ -95,8 +116,8 @@ body {
 }
 
 .login-mobile-brand {
-  color: var(--brand-primary);
-  font-weight: 800;
+  width: 2.75rem;
+  height: 2.75rem;
 }
 
 .login-title {

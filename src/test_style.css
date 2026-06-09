@@ -352,3 +352,221 @@ article h3 {
     color: var(--secondary-warm);
     margin-bottom: 15px;
 }
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+.travel-chat-launcher {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 1000;
+}
+
+.travel-chat-toggle {
+    width: 58px;
+    height: 58px;
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--primary-warm), var(--secondary-warm));
+    color: #fff;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 14px 30px rgba(142, 93, 63, 0.28);
+}
+
+.travel-chat-panel {
+    position: absolute;
+    right: 0;
+    bottom: 72px;
+    width: min(360px, calc(100vw - 32px));
+    background: var(--card-bg);
+    border: 1px solid rgba(214, 185, 155, 0.85);
+    border-radius: 20px;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.16);
+    padding: 18px;
+}
+
+.travel-chat-panel.hidden {
+    display: none;
+}
+
+.travel-chat-panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.travel-chat-panel-title {
+    font-size: 1.15rem;
+    color: var(--secondary-warm);
+    margin: 0;
+}
+
+.travel-chat-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    background: #f6ede4;
+    color: var(--secondary-warm);
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.travel-chat-panel-desc {
+    margin: 0 0 14px;
+    font-size: 0.95rem;
+    color: var(--text-light);
+}
+
+.travel-chat-messages {
+    max-height: 280px;
+    overflow-y: auto;
+    display: grid;
+    gap: 10px;
+    padding: 10px 0;
+    margin-bottom: 12px;
+}
+
+.travel-chat-message {
+    display: flex;
+}
+
+.travel-chat-message.user {
+    justify-content: flex-end;
+}
+
+.travel-chat-message.ai {
+    justify-content: flex-start;
+}
+
+.travel-chat-bubble {
+    max-width: 88%;
+    padding: 10px 12px;
+    border-radius: 16px;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    word-break: keep-all;
+    font-size: 0.93rem;
+}
+
+.travel-chat-message.user .travel-chat-bubble {
+    background: var(--primary-warm);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+}
+
+.travel-chat-message.ai .travel-chat-bubble {
+    background: #fbf3e8;
+    color: var(--text-main);
+    border: 1px solid rgba(217, 185, 155, 0.45);
+    border-bottom-left-radius: 4px;
+}
+
+.travel-chat-form {
+    display: grid;
+    gap: 10px;
+}
+
+.travel-chat-input {
+    width: 100%;
+    resize: vertical;
+    min-height: 92px;
+    border: 1px solid var(--accent-sepia);
+    border-radius: 14px;
+    padding: 12px 14px;
+    font: inherit;
+    color: var(--text-main);
+    background: #fff;
+    outline: none;
+}
+
+.travel-chat-input:focus {
+    border-color: var(--primary-warm);
+    box-shadow: 0 0 0 3px rgba(198, 134, 66, 0.12);
+}
+
+.travel-chat-button {
+    border: none;
+    border-radius: 999px;
+    padding: 11px 16px;
+    background: var(--primary-warm);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.travel-chat-button:hover:not(:disabled) {
+    background: var(--secondary-warm);
+}
+
+.travel-chat-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.travel-chat-status {
+    min-height: 22px;
+    margin-top: 10px;
+    color: var(--text-light);
+    font-size: 0.92rem;
+}
+
+.travel-chat-result {
+    margin-top: 12px;
+    display: grid;
+    gap: 10px;
+    padding: 14px;
+    background: #fbf7f2;
+    border-radius: 16px;
+    border: 1px solid rgba(217, 185, 155, 0.65);
+    max-height: 260px;
+    overflow: auto;
+}
+
+.travel-chat-result-item {
+    display: grid;
+    gap: 4px;
+}
+
+.travel-chat-label {
+    font-size: 0.78rem;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.travel-chat-result strong,
+.travel-chat-result p {
+    margin: 0;
+}
+
+@media (max-width: 480px) {
+    .travel-chat-launcher {
+        right: 12px;
+        bottom: 12px;
+    }
+
+    .travel-chat-panel {
+        width: min(320px, calc(100vw - 24px));
+        bottom: 68px;
+    }
+
+    .travel-chat-bubble {
+        max-width: 100%;
+    }
+}

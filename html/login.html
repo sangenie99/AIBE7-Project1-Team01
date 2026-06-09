@@ -22,7 +22,9 @@
   <body>
     <header class="navbar navbar-expand-md fixed-top glass-nav border-bottom">
       <div class="container-fluid px-4 px-lg-5">
-        <a class="navbar-brand brand-name" href="main.html">Sunset Glow Travel</a>
+        <a class="navbar-brand brand-name" href="main.html"
+          >Sunset Glow Travel</a
+        >
         <button
           class="navbar-toggler"
           type="button"
@@ -34,12 +36,12 @@
         >
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse justify-content-between" id="siteNav">
-          <ul class="navbar-nav mx-auto gap-md-4">
-            <li class="nav-item"><a class="nav-link nav-link-custom" href="main.html">Home</a></li>
-          </ul>
-          <div class="d-flex align-items-center gap-3">
-            <a class="nav-link nav-link-custom active-link" href="signup.html">signup</a>
+        <div class="collapse navbar-collapse justify-content-end" id="siteNav">
+          <div class="d-flex align-items-center gap-4">
+            <a class="nav-link nav-link-custom" href="main.html">Home</a>
+            <a class="nav-link nav-link-custom active-link" href="signup.html"
+              >signup</a
+            >
           </div>
         </div>
       </div>
@@ -78,7 +80,9 @@
 
           <form id="login-form" class="vstack gap-4">
             <div>
-              <label for="email" class="form-label login-label">이메일 주소</label>
+              <label for="email" class="form-label login-label"
+                >이메일 주소</label
+              >
               <input
                 id="email"
                 name="email"
@@ -89,7 +93,9 @@
             </div>
 
             <div>
-              <label for="password" class="form-label login-label">비밀번호</label>
+              <label for="password" class="form-label login-label"
+                >비밀번호</label
+              >
               <input
                 id="password"
                 name="password"
@@ -99,7 +105,9 @@
               />
             </div>
 
-            <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+            <div
+              class="d-flex align-items-center justify-content-between gap-3 flex-wrap"
+            >
               <div class="form-check login-check">
                 <input class="form-check-input" type="checkbox" id="remember" />
                 <label class="form-check-label" for="remember">
@@ -123,7 +131,10 @@
         </div>
 
         <footer class="login-footer">
-          <p>© 2024 Sunset Glow Travel. May your journey be as peaceful as the setting sun.</p>
+          <p>
+            © 2024 Sunset Glow Travel. May your journey be as peaceful as the
+            setting sun.
+          </p>
         </footer>
       </section>
     </main>
@@ -132,43 +143,49 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../js/community.js"></script>
     <script>
-      document.getElementById("login-form").addEventListener("submit", async function (e) {
-        e.preventDefault();
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value.trim();
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const email = document.getElementById("email").value.trim();
+          const password = document.getElementById("password").value.trim();
 
-        if (!email || !password) {
-          alert("이메일과 비밀번호를 입력해주세요.");
-          return;
-        }
-
-        const button = e.target.querySelector("button[type='submit']");
-        const original = button.innerHTML;
-        button.disabled = true;
-        button.innerHTML =
-          '<span class="material-symbols-outlined align-middle login-spinner">progress_activity</span> 로그인 중...';
-
-        try {
-          if (!window.supabaseClient) {
-            await window.initAuth();
-          }
-          const { data, error } = await window.supabaseClient.auth.signInWithPassword({
-            email,
-            password
-          });
-
-          if (error) {
-            throw error;
+          if (!email || !password) {
+            alert("이메일과 비밀번호를 입력해주세요.");
+            return;
           }
 
-          alert("로그인에 성공했습니다!");
-          window.location.href = "main.html";
-        } catch (error) {
-          alert("로그인 실패: " + (error.message || "이메일 또는 비밀번호를 확인해주세요."));
-          button.innerHTML = original;
-          button.disabled = false;
-        }
-      });
+          const button = e.target.querySelector("button[type='submit']");
+          const original = button.innerHTML;
+          button.disabled = true;
+          button.innerHTML =
+            '<span class="material-symbols-outlined align-middle login-spinner">progress_activity</span> 로그인 중...';
+
+          try {
+            if (!window.supabaseClient) {
+              await window.initAuth();
+            }
+            const { data, error } =
+              await window.supabaseClient.auth.signInWithPassword({
+                email,
+                password,
+              });
+
+            if (error) {
+              throw error;
+            }
+
+            alert("로그인에 성공했습니다!");
+            window.location.href = "main.html";
+          } catch (error) {
+            alert(
+              "로그인 실패: " +
+                (error.message || "이메일 또는 비밀번호를 확인해주세요."),
+            );
+            button.innerHTML = original;
+            button.disabled = false;
+          }
+        });
     </script>
   </body>
 </html>

@@ -22,7 +22,9 @@
   <body>
     <header class="navbar navbar-expand-md fixed-top glass-nav border-bottom">
       <div class="container-fluid px-4 px-lg-5">
-        <a class="navbar-brand brand-name" href="main.html">Sunset Glow Travel</a>
+        <a class="navbar-brand brand-name" href="main.html"
+          >Sunset Glow Travel</a
+        >
         <button
           class="navbar-toggler"
           type="button"
@@ -34,12 +36,12 @@
         >
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse justify-content-between" id="siteNav">
-          <ul class="navbar-nav mx-auto gap-md-4">
-            <li class="nav-item"><a class="nav-link nav-link-custom" href="main.html">Home</a></li>
-          </ul>
-          <div class="d-flex align-items-center gap-3">
-            <a class="nav-link nav-link-custom active-link" href="login.html">login</a>
+        <div class="collapse navbar-collapse justify-content-end" id="siteNav">
+          <div class="d-flex align-items-center gap-4">
+            <a class="nav-link nav-link-custom" href="main.html">Home</a>
+            <a class="nav-link nav-link-custom active-link" href="login.html"
+              >login</a
+            >
           </div>
         </div>
       </div>
@@ -93,7 +95,9 @@
             </div>
 
             <div>
-              <label for="password" class="form-label signup-label">비밀번호</label>
+              <label for="password" class="form-label signup-label"
+                >비밀번호</label
+              >
               <div class="input-group signup-password-group">
                 <input
                   id="password"
@@ -101,14 +105,20 @@
                   class="form-control signup-input"
                   placeholder="••••••••"
                 />
-                <button class="btn signup-icon-btn" type="button" aria-label="비밀번호 보기">
+                <button
+                  class="btn signup-icon-btn"
+                  type="button"
+                  aria-label="비밀번호 보기"
+                >
                   <span class="material-symbols-outlined">visibility</span>
                 </button>
               </div>
             </div>
 
             <div>
-              <label for="confirm-password" class="form-label signup-label">비밀번호 확인</label>
+              <label for="confirm-password" class="form-label signup-label"
+                >비밀번호 확인</label
+              >
               <input
                 id="confirm-password"
                 type="password"
@@ -141,60 +151,67 @@
         togglePasswordBtn.addEventListener("click", () => {
           const isPassword = passwordInput.type === "password";
           passwordInput.type = isPassword ? "text" : "password";
-          togglePasswordBtn.querySelector(".material-symbols-outlined").textContent = 
-            isPassword ? "visibility_off" : "visibility";
+          togglePasswordBtn.querySelector(
+            ".material-symbols-outlined",
+          ).textContent = isPassword ? "visibility_off" : "visibility";
         });
       }
 
-      document.getElementById("signup-form").addEventListener("submit", async function (e) {
-        e.preventDefault();
-        const name = document.getElementById("name").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value.trim();
-        const confirmPassword = document.getElementById("confirm-password").value.trim();
+      document
+        .getElementById("signup-form")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const name = document.getElementById("name").value.trim();
+          const email = document.getElementById("email").value.trim();
+          const password = document.getElementById("password").value.trim();
+          const confirmPassword = document
+            .getElementById("confirm-password")
+            .value.trim();
 
-        if (!name || !email || !password || !confirmPassword) {
-          alert("모든 필드를 입력해주세요.");
-          return;
-        }
-
-        if (password !== confirmPassword) {
-          alert("비밀번호가 일치하지 않습니다.");
-          return;
-        }
-
-        const button = e.target.querySelector("button[type='submit']");
-        const original = button.innerHTML;
-        button.disabled = true;
-        button.innerHTML =
-          '<span class="material-symbols-outlined align-middle signup-spinner">progress_activity</span> 가입 중...';
-
-        try {
-          if (!window.supabaseClient) {
-            await window.initAuth();
+          if (!name || !email || !password || !confirmPassword) {
+            alert("모든 필드를 입력해주세요.");
+            return;
           }
-          const { data, error } = await window.supabaseClient.auth.signUp({
-            email,
-            password,
-            options: {
-              data: {
-                full_name: name
-              }
+
+          if (password !== confirmPassword) {
+            alert("비밀번호가 일치하지 않습니다.");
+            return;
+          }
+
+          const button = e.target.querySelector("button[type='submit']");
+          const original = button.innerHTML;
+          button.disabled = true;
+          button.innerHTML =
+            '<span class="material-symbols-outlined align-middle signup-spinner">progress_activity</span> 가입 중...';
+
+          try {
+            if (!window.supabaseClient) {
+              await window.initAuth();
             }
-          });
+            const { data, error } = await window.supabaseClient.auth.signUp({
+              email,
+              password,
+              options: {
+                data: {
+                  full_name: name,
+                },
+              },
+            });
 
-          if (error) {
-            throw error;
+            if (error) {
+              throw error;
+            }
+
+            alert("회원가입 성공! 로그인 화면으로 이동합니다.");
+            window.location.href = "login.html";
+          } catch (error) {
+            alert(
+              "회원가입 실패: " + (error.message || "오류가 발생했습니다."),
+            );
+            button.innerHTML = original;
+            button.disabled = false;
           }
-
-          alert("회원가입 성공! 로그인 화면으로 이동합니다.");
-          window.location.href = "login.html";
-        } catch (error) {
-          alert("회원가입 실패: " + (error.message || "오류가 발생했습니다."));
-          button.innerHTML = original;
-          button.disabled = false;
-        }
-      });
+        });
     </script>
   </body>
 </html>

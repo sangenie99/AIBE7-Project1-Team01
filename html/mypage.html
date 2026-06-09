@@ -9,7 +9,7 @@
 
             if (!token) {
                 alert('로그인이 필요한 페이지입니다. 로그인 페이지로 이동합니다.');
-                window.location.href = 'login.html';
+                window.location.href = '/login.html';
             } else {
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('content').style.display = 'block';
@@ -23,7 +23,7 @@
             localStorage.removeItem('loginToken');
             localStorage.removeItem('userName');
             alert('로그아웃 되었습니다.');
-            window.location.href = 'login.html';
+            window.location.href = '/login.html';
         }
     </script>
     <style>

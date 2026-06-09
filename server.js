@@ -8,7 +8,11 @@ const port = process.env.PORT || 3000;
 const geminiApiKey = process.env.GEMINI_API_KEY || process.env.AI_API_KEY || "";
 const geminiModel = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 
-const publicDir = path.join(__dirname, "src");
+const htmlDir = path.join(__dirname, "html");
+const cssDir = path.join(__dirname, "css");
+const jsDir = path.join(__dirname, "js");
+const iconsDir = path.join(__dirname, "icons");
+const assetDir = path.join(__dirname, "asset");
 
 app.get("/config.js", (req, res) => {
   const supabaseUrl = process.env.SUPABASE_URL || "";
@@ -21,11 +25,15 @@ app.get("/config.js", (req, res) => {
   );
 });
 
-app.use(express.static(publicDir));
+app.use(express.static(htmlDir));
+app.use("/css", express.static(cssDir));
+app.use("/js", express.static(jsDir));
+app.use("/icons", express.static(iconsDir));
+app.use("/asset", express.static(assetDir));
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(publicDir, "main.html"));
+  res.sendFile(path.join(htmlDir, "main.html"));
 });
 
 async function getFestivalData(region, date) {

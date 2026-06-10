@@ -2,34 +2,34 @@
 (function () {
   let supabaseClient = null;
 
-  // Function to load and parse the .env file
+  // 환경변수 로드: server.js가 제공하는 /config.js 를 통해 주입된 값 사용
   async function loadEnv() {
-    try {
-      const response = await fetch(".env");
-      if (!response.ok) throw new Error("Failed to fetch .env");
-      const text = await response.text();
-      const env = {};
-      text.split("\n").forEach((line) => {
-        const parts = line.split("=");
-        if (parts.length >= 2) {
-          const key = parts[0].trim();
-          const value = parts
-            .slice(1)
-            .join("=")
-            .trim()
-            .replace(/^['"]|['"]$/g, "");
-          env[key] = value;
-        }
-      });
-      return env;
-    } catch (e) {
-      console.warn("Using local fallback config for Supabase:", e);
-      // Hardcoded fallback matching the .env variables
+    // /config.js 가 window에 주입한 값 사용
+    if (window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
       return {
-        SUPABASE_URL: "https://sojcpuqpgxwzbntddqky.supabase.co",
-        SUPABASE_ANON_KEY: "sb_publishable_43B2szllehr5fAD5C72cgw_gLAON3Vs",
+        SUPABASE_URL: window.SUPABASE_URL,
+        SUPABASE_ANON_KEY: window.SUPABASE_ANON_KEY
       };
     }
+
+    // /config.js 가 아직 로드되지 않았다면 동적으로 가져오기 시도
+    try {
+      const response = await fetch('/config.js');
+      if (!response.ok) throw new Error('config.js 로드 실패');
+      const script = await response.text();
+      const fn = new Function(script);
+      fn();
+      if (window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
+        return {
+          SUPABASE_URL: window.SUPABASE_URL,
+          SUPABASE_ANON_KEY: window.SUPABASE_ANON_KEY
+        };
+      }
+    } catch (e) {
+      console.error('Supabase 설정을 로드할 수 없습니다. 서버(node server.js)를 통해 접속해주세요.', e);
+    }
+
+    throw new Error('Supabase 환경변수가 설정되지 않았습니다. /config.js를 확인하세요.');
   }
 
   // Initialize Auth & Supabase Client
@@ -48,6 +48,9 @@
       );
       window.supabaseClient = supabaseClient;
       await handleAuthState();
+
+      // supabaseClient 준비 완료를 다른 스크립트에 알림
+      window.dispatchEvent(new CustomEvent('supabase-ready', { detail: { client: supabaseClient } }));
     } else {
       console.error(
         'Supabase library is not loaded. Please include: <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>',
@@ -144,8 +147,8 @@
   async function logout() {
     if (supabaseClient) {
       await supabaseClient.auth.signOut();
-      alert("로그아웃 되었습니다.");
-      window.location.href = "index.html";
+      alert('로그아웃 되었습니다.');
+      window.location.href = 'index.html';
     }
   }
 

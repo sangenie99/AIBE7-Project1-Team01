@@ -24,11 +24,12 @@ const assetDir = path.join(__dirname, "asset");
 app.get("/config.js", (req, res) => {
   const supabaseUrl = process.env.SUPABASE_URL || "";
   const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || "";
+  const kakaoMapsApiKey = process.env.KAKAO_MAPS_API_KEY || "";
 
   res.type("application/javascript").send(
     `window.SUPABASE_URL=${JSON.stringify(supabaseUrl)};window.SUPABASE_ANON_KEY=${JSON.stringify(
       supabaseAnonKey
-    )};`
+    )};window.KAKAO_MAPS_API_KEY=${JSON.stringify(kakaoMapsApiKey)};`
   );
 });
 

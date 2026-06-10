@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="../css/main.css" />
     <style>
       /* 지도 페이지 전용 스타일 */
+      .container {
+        max-width: 1400px; /* 전체 너비를 키워 지도 크기를 유지함 */
+      }
+
       .map-header {
         text-align: center;
         padding: 50px 20px;
@@ -29,10 +33,17 @@
         grid-column: 1 / -1;
       }
 
+      .map-layout {
+        display: flex;
+        gap: 20px;
+        height: 700px; /* 높이를 조금 더 키워 시원하게 배치 */
+        width: 100%;
+      }
+
       /* 지도가 들어갈 빈 공간 */
       #map {
-        width: 100%;
-        height: 600px; /* PC 기준 높이 */
+        flex: 7.5; /* 지도의 비중을 높임 */
+        height: 100%;
         background-color: #f0f0f0;
         border-radius: 12px;
         display: flex;
@@ -49,9 +60,97 @@
         font-weight: 500;
       }
 
+      .festival-sidebar {
+        flex: 2.5; /* 사이드바의 적절한 너비 확보 */
+        height: 100%;
+        background-color: var(--card-bg);
+        border: 1px solid var(--accent-sepia);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+      }
+
+      .sidebar-title {
+        margin: 0;
+        padding: 15px 20px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--secondary-warm);
+        border-bottom: 1px solid var(--bg-warm);
+        background-color: var(--bg-warm);
+      }
+
+      .festival-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .festival-item {
+        padding: 12px 15px;
+        border-radius: 8px;
+        background-color: var(--bg-warm);
+        border: 1px solid transparent;
+        transition: var(--transition);
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .festival-item:hover {
+        border-color: var(--primary-warm);
+        background-color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .festival-item.active {
+        border-color: var(--primary-warm);
+        background-color: white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .festival-name {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: var(--text-main);
+        margin-bottom: 4px;
+      }
+
+      .festival-info {
+        font-size: 0.8rem;
+        color: var(--text-light);
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .loading-text,
+      .no-data-text {
+        text-align: center;
+        color: var(--text-light);
+        padding: 40px 20px;
+        font-size: 0.9rem;
+      }
+
       @media (max-width: 768px) {
+        .map-layout {
+          flex-direction: column;
+          height: auto;
+        }
         #map {
           height: 400px;
+          flex: none;
+          width: 100%;
+        }
+        .festival-sidebar {
+          height: 300px;
+          flex: none;
+          width: 100%;
         }
       }
     </style>
@@ -125,8 +224,35 @@
           >
         </div>
 
-        <!-- 지도가 렌더링될 실제 영역 -->
-        <div id="map"></div>
+        <!-- 지도 및 축제목록 레이아웃 -->
+        <div class="map-layout">
+          <!-- 지도가 렌더링될 실제 영역 -->
+          <div id="map"></div>
+
+          <!-- 축제목록 영역 -->
+          <div class="festival-sidebar">
+            <h4 class="sidebar-title">축제 찾기</h4>
+            <div
+              style="
+                padding: 10px 15px;
+                border-bottom: 1px solid var(--bg-warm);
+              "
+            >
+              <input
+                type="text"
+                id="region-search"
+                class="input-field"
+                placeholder="지역 검색 (예: 제주, 강릉)"
+                style="padding: 8px 12px; font-size: 0.85rem; margin-bottom: 0"
+              />
+            </div>
+            <div id="festival-list" class="festival-list">
+              <div class="loading-text">
+                지도를 클릭하거나<br />지역을 검색해보세요.
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
     </main>
 
@@ -139,7 +265,447 @@
     <script src="/config.js"></script>
     <script src="../js/community.js"></script>
     <script>
-      // 나중에 외부 지도 API(Kakao, Google, Naver 등) 호출 코드를 여기에 작성하세요.
+      let map = null;
+      let markers = [];
+      let festivalsData = [];
+
+      // Kakao Maps API 동적 로드
+      function loadKakaoMapScript(appKey) {
+        if (!appKey) {
+          console.warn(
+            "Kakao Maps API Key가 설정되지 않았습니다. 안식처 상세 설명 모드로 동작합니다.",
+          );
+          showNoMapPlaceholder();
+          return;
+        }
+
+        const script = document.createElement("script");
+        script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${appKey}&autoload=false&libraries=services`;
+        script.onload = () => {
+          kakao.maps.load(() => {
+            initMap();
+          });
+        };
+        script.onerror = () => {
+          console.error("Kakao Maps 로드 실패");
+          showNoMapPlaceholder();
+        };
+        document.head.appendChild(script);
+      }
+
+      // 지도 초기화
+      function initMap() {
+        const mapContainer = document.getElementById("map");
+        if (!mapContainer) return;
+
+        // 플레이스홀더 텍스트 제거
+        mapContainer.innerHTML = "";
+        mapContainer.style.background = "none";
+
+        const mapOption = {
+          center: new kakao.maps.LatLng(35.9, 127.8), // 한반도 중심부
+          level: 11,
+        };
+
+        map = new kakao.maps.Map(mapContainer, mapOption);
+
+        // 지도 클릭 이벤트 리스너 추가
+        kakao.maps.event.addListener(map, "click", function (mouseEvent) {
+          const latlng = mouseEvent.latLng;
+          console.log("클릭한 위치:", latlng.getLat(), latlng.getLng());
+          fetchFestivalsByLocation(latlng.getLat(), latlng.getLng());
+        });
+
+        if (festivalsData.length > 0) {
+          displayMarkers(festivalsData);
+        }
+      }
+
+      // 지도 클릭 시 주소정보 획득 및 축제목록 필터링
+      function fetchFestivalsByLocation(lat, lng) {
+        if (!window.kakao || !map) {
+          // 지도가 없을 때 좌표 기반 간이 필터링
+          filterByDistance(lat, lng);
+          return;
+        }
+
+        const geocoder = new kakao.maps.services.Geocoder();
+        geocoder.coord2RegionCode(lng, lat, (result, status) => {
+          if (status === kakao.maps.services.Status.OK) {
+            let region1 = "";
+            let region2 = "";
+            for (let i = 0; i < result.length; i++) {
+              if (result[i].region_type === "H") {
+                region1 = result[i].region_1depth_name;
+                region2 = result[i].region_2depth_name;
+                break;
+              }
+            }
+
+            console.log("선택한 지역:", region1, region2);
+
+            const cleanRegion1 = region1.substring(0, 2); // 예: "제주", "부산"
+            const cleanRegion2 = region2 ? region2.replace(/시$|군$|구$/, "") : "";
+
+            const filtered = festivalsData.filter((fest) => {
+              const loc = fest.location || "";
+              return (
+                loc.includes(cleanRegion1) ||
+                (cleanRegion2 && loc.includes(cleanRegion2))
+              );
+            });
+
+            const titleEl = document.querySelector(".sidebar-title");
+            if (titleEl) {
+              titleEl.textContent = `${region2 || region1 || "선택 지역"} 축제`;
+            }
+
+            renderFestivalList(filtered);
+          } else {
+            filterByDistance(lat, lng);
+          }
+        });
+      }
+
+      // 지도 API 통신 실패 시 혹은 대체 좌표 반경 필터링
+      function filterByDistance(lat, lng) {
+        const radius = 0.45; // 약 50km 반경 범위
+        const filtered = festivalsData.filter((fest) => {
+          if (!fest.latitude || !fest.longitude) return false;
+          const latDiff = Math.abs(fest.latitude - lat);
+          const lngDiff = Math.abs(fest.longitude - lng);
+          return Math.sqrt(latDiff * latDiff + lngDiff * lngDiff) <= radius;
+        });
+
+        const titleEl = document.querySelector(".sidebar-title");
+        if (titleEl) {
+          titleEl.textContent = "선택 지역 주변 축제";
+        }
+
+        renderFestivalList(filtered);
+      }
+
+      // 검색창을 통한 축제/지역 검색 수행
+      function performRegionSearch(query) {
+        if (!query) {
+          const listContainer = document.getElementById("festival-list");
+          if (listContainer) {
+            listContainer.innerHTML = `
+              <div class="loading-text">
+                지도를 클릭하거나<br />지역을 검색해보세요.
+              </div>
+            `;
+          }
+          const titleEl = document.querySelector(".sidebar-title");
+          if (titleEl) titleEl.textContent = "축제 찾기";
+          return;
+        }
+
+        const filtered = festivalsData.filter((fest) => {
+          const titleMatch =
+            fest.title && fest.title.toLowerCase().includes(query.toLowerCase());
+          const locMatch =
+            fest.location &&
+            fest.location.toLowerCase().includes(query.toLowerCase());
+          const descMatch =
+            fest.description &&
+            fest.description.toLowerCase().includes(query.toLowerCase());
+          return titleMatch || locMatch || descMatch;
+        });
+
+        const titleEl = document.querySelector(".sidebar-title");
+        if (titleEl) {
+          titleEl.textContent = `'${query}' 검색 결과`;
+        }
+
+        renderFestivalList(filtered);
+
+        // 검색 결과가 존재할 경우 첫 번째 축제 위치로 지도 이동 및 마커 활성화
+        if (
+          map &&
+          window.kakao &&
+          filtered.length > 0 &&
+          filtered[0].latitude &&
+          filtered[0].longitude
+        ) {
+          const position = new kakao.maps.LatLng(
+            filtered[0].latitude,
+            filtered[0].longitude,
+          );
+          map.panTo(position);
+
+          const markerIndex = festivalsData.findIndex(
+            (f) => String(f.id) === String(filtered[0].id),
+          );
+          if (markerIndex !== -1 && markers[markerIndex]) {
+            markers.forEach((m) => m.infowindow.close());
+            markers[markerIndex].infowindow.open(map, markers[markerIndex]);
+          }
+        }
+      }
+
+      // 지도에 마커 표시
+      function displayMarkers(festivals) {
+        if (!map || !window.kakao) return;
+
+        // 기존 마커 제거
+        markers.forEach((m) => m.setMap(null));
+        markers = [];
+
+        const bounds = new kakao.maps.LatLngBounds();
+        let validCoordsCount = 0;
+
+        festivals.forEach((fest) => {
+          if (!fest.latitude || !fest.longitude) return;
+
+          const position = new kakao.maps.LatLng(fest.latitude, fest.longitude);
+          const marker = new kakao.maps.Marker({
+            position: position,
+            map: map,
+          });
+
+          const iwContent = `
+            <div style="padding:10px; font-size:12px; font-family:sans-serif; min-width:180px; text-align:left; border-radius:8px;">
+              <strong style="display:block;margin-bottom:6px;color:var(--secondary-warm);font-size:13px;">${escapeHtml(fest.title)}</strong>
+              <div style="color:#707070;line-height:1.4;">
+                <div>📅 ${escapeHtml(fest.start_date || "")}</div>
+                <div style="margin-top:2px; font-size:11px; color:#888;">📍 ${escapeHtml(fest.location || "")}</div>
+              </div>
+            </div>
+          `;
+
+          const infowindow = new kakao.maps.InfoWindow({
+            content: iwContent,
+            removable: true,
+          });
+
+          kakao.maps.event.addListener(marker, "click", () => {
+            // 모든 infowindow 닫기
+            markers.forEach((m) => m.infowindow.close());
+            infowindow.open(map, marker);
+
+            // 마커 클릭 시 해당 축제 지역(혹은 본인)을 리스트에 바로 노출
+            const matchedRegionFestivals = festivalsData.filter((f) => {
+              if (!f.location || !fest.location) return false;
+              const cleanFestLoc = fest.location.substring(0, 4);
+              return f.location.includes(cleanFestLoc);
+            });
+
+            const listToRender =
+              matchedRegionFestivals.length > 0
+                ? matchedRegionFestivals
+                : [fest];
+
+            const titleEl = document.querySelector(".sidebar-title");
+            if (titleEl) {
+              titleEl.textContent = `${fest.title} 주변`;
+            }
+            renderFestivalList(listToRender);
+
+            const clickedItem = document.querySelector(
+              `.festival-item[data-id="${fest.id}"]`,
+            );
+            if (clickedItem) {
+              clickedItem.classList.add("active");
+            }
+          });
+
+          marker.infowindow = infowindow;
+          markers.push(marker);
+          bounds.extend(position);
+          validCoordsCount++;
+        });
+
+        // 유효한 마커가 있다면 경계 재조정
+        if (validCoordsCount > 0) {
+          map.setBounds(bounds);
+        }
+      }
+
+      // API Key가 없는 경우의 첫 로드 시 지도 영역 안내 문구
+      function showNoMapPlaceholder() {
+        const mapContainer = document.getElementById("map");
+        if (mapContainer) {
+          mapContainer.innerHTML = `
+            <div style="padding: 30px; text-align: center; max-width: 80%; margin: auto;">
+              <span style="font-size: 3rem;">🍂</span>
+              <h4 style="color: var(--secondary-warm); margin-top: 15px; margin-bottom: 8px; font-size: 1.2rem;">실시간 여행 안식처 지도</h4>
+              <p style="color: var(--text-main); font-size: 0.95rem; line-height: 1.6;">
+                우측 검색창이나 목록에서 원하시는 지역을 검색/선택하시면 상세 설명을 이곳에서 편안하게 확인할 수 있습니다.
+              </p>
+              <p style="font-size: 0.8rem; color: var(--text-light); margin-top: 15px;">
+                * 개발자 환경에서 Kakao Maps API 키 설정 시 실제 지도가 활성화됩니다.
+              </p>
+            </div>
+          `;
+        }
+      }
+
+      // 축제 목록 렌더링
+      function renderFestivalList(festivals) {
+        const listContainer = document.getElementById("festival-list");
+        if (!listContainer) return;
+
+        if (festivals.length === 0) {
+          listContainer.innerHTML =
+            '<div class="no-data-text">조회된 축제가 없습니다.</div>';
+          return;
+        }
+
+        listContainer.innerHTML = festivals
+          .map((fest) => {
+            const dateStr =
+              fest.start_date && fest.end_date
+                ? `${fest.start_date} ~ ${fest.end_date}`
+                : fest.date_range || fest.start_date || "일정 확인 필요";
+
+            return `
+            <div class="festival-item" data-id="${fest.id}">
+              <div class="festival-name">${escapeHtml(fest.title)}</div>
+              <div class="festival-info">
+                <span>📅 ${escapeHtml(dateStr)}</span>
+                <span>📍 ${escapeHtml(fest.location || "위치 미정")}</span>
+              </div>
+            </div>
+          `;
+          })
+          .join("");
+
+        // 각 항목 클릭 이벤트 바인딩
+        const items = listContainer.querySelectorAll(".festival-item");
+        items.forEach((item) => {
+          item.addEventListener("click", () => {
+            items.forEach((i) => i.classList.remove("active"));
+            item.classList.add("active");
+
+            const id = item.dataset.id;
+            const festival = festivals.find((f) => String(f.id) === String(id));
+            if (festival) {
+              focusOnFestival(festival);
+            }
+          });
+        });
+      }
+
+      // 특정 축제 선택 시 상세 동작 (지도가 있을 때와 없을 때 구분)
+      function focusOnFestival(festival) {
+        if (map && window.kakao && festival.latitude && festival.longitude) {
+          const position = new kakao.maps.LatLng(
+            festival.latitude,
+            festival.longitude,
+          );
+          map.panTo(position);
+
+          // 해당하는 마커 찾아서 인포윈도우 열기
+          const markerIndex = festivalsData.findIndex(
+            (f) => String(f.id) === String(festival.id),
+          );
+          if (markerIndex !== -1 && markers[markerIndex]) {
+            markers.forEach((m) => m.infowindow.close());
+            markers[markerIndex].infowindow.open(map, markers[markerIndex]);
+          }
+        } else {
+          // 지도가 없거나 로드가 안 되었을 때의 수려한 가이드 뷰
+          const mapContainer = document.getElementById("map");
+          if (mapContainer) {
+            const dateStr =
+              festival.start_date && festival.end_date
+                ? `${festival.start_date} ~ ${festival.end_date}`
+                : festival.date_range ||
+                  festival.start_date ||
+                  "일정 확인 필요";
+
+            mapContainer.innerHTML = `
+              <div class="fallback-detail-card" style="padding: 40px; text-align: left; max-width: 90%; width: 500px; background: white; border-radius: 12px; box-shadow: 0 8px 30px rgba(142, 93, 63, 0.12); margin: auto;">
+                <span style="font-size: 0.8rem; font-weight: 600; color: var(--primary-warm); background-color: var(--bg-warm); padding: 3px 10px; border-radius: 4px; display: inline-block; margin-bottom: 12px;">안식처 정보</span>
+                <h3 style="color: var(--secondary-warm); margin: 0 0 15px 0; font-size: 1.6rem; font-weight: 700; border-left: 4px solid var(--accent-sepia); padding-left: 12px;">
+                  ${escapeHtml(festival.title)}
+                </h3>
+                <p style="color: var(--text-main); font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px;">
+                  ${escapeHtml(festival.description || "축제에 관한 세부 설명을 준비 중입니다.")}
+                </p>
+                <div style="font-size: 0.85rem; color: var(--text-light); display: flex; flex-direction: column; gap: 6px; border-top: 1px solid var(--bg-warm); padding-top: 15px;">
+                  <span><strong>📅 기간:</strong> ${escapeHtml(dateStr)}</span>
+                  <span><strong>📍 위치:</strong> ${escapeHtml(festival.location || "상세 위치 제공 준비중")}</span>
+                </div>
+              </div>
+            `;
+          }
+        }
+      }
+
+      // 데이터 불러오기 (Supabase -> Mock 데이터 순서)
+      async function fetchFestivals() {
+        let fetchedData = [];
+
+        if (window.supabaseClient) {
+          try {
+            const { data, error } = await window.supabaseClient
+              .from("festivals")
+              .select("*")
+              .order("start_date", { ascending: true });
+
+            if (error) {
+              console.warn("Supabase festivals 테이블 읽기 에러:", error);
+            } else if (data && data.length > 0) {
+              fetchedData = data;
+            }
+          } catch (e) {
+            console.warn(
+              "Supabase 데이터 로드 실패. 로컬 데이터로 대체합니다.",
+              e,
+            );
+          }
+        }
+
+        festivalsData = fetchedData;
+
+        // 리스트를 초기에 렌더링하지 않고, 맵에 마커만 표시합니다.
+        if (map) {
+          displayMarkers(festivalsData);
+        }
+      }
+
+      function escapeHtml(str) {
+        if (!str) return "";
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
+      }
+
+      // Supabase 클라이언트 준비 완료 이벤트 리스너 등록
+      window.addEventListener("supabase-ready", () => {
+        fetchFestivals();
+      });
+
+      // 초기 구동 및 이벤트 등록
+      document.addEventListener("DOMContentLoaded", () => {
+        // config.js에 세팅된 Kakao Map API App Key 로드 시도
+        const appKey = window.KAKAO_MAPS_API_KEY || "";
+        loadKakaoMapScript(appKey);
+
+        // 검색창 이벤트 바인딩
+        const searchInput = document.getElementById("region-search");
+        if (searchInput) {
+          searchInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+              performRegionSearch(searchInput.value.trim());
+            }
+          });
+        }
+
+        // Supabase Client가 이미 존재하는 경우
+        if (window.supabaseClient) {
+          fetchFestivals();
+        } else {
+          // 예외 상황에 대비하여 지연 시작 설정
+          setTimeout(() => {
+            if (festivalsData.length === 0) {
+              fetchFestivals();
+            }
+          }, 1200);
+        }
+      });
     </script>
   </body>
 </html>

@@ -2,12 +2,9 @@
 (function () {
   let supabaseClient = null;
 
-  // 환경변수 로드 우선순위:
-  // 1) server.js가 제공하는 /config.js (window.SUPABASE_URL 등)
-  // 2) .env 파일 직접 fetch (로컬 개발 환경)
-  // 3) 하드코딩 fallback
+  // 환경변수 로드: server.js가 제공하는 /config.js 를 통해 주입된 값 사용
   async function loadEnv() {
-    // 1) server.js /config.js 가 window에 이미 주입한 경우
+    // /config.js 가 window에 주입한 값 사용
     if (window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
       return {
         SUPABASE_URL: window.SUPABASE_URL,
@@ -15,30 +12,24 @@
       };
     }
 
-    // 2) .env 파일 fetch 시도 (로컬 개발 전용)
+    // /config.js 가 아직 로드되지 않았다면 동적으로 가져오기 시도
     try {
-      const response = await fetch('.env');
-      if (!response.ok) throw new Error('Failed to fetch .env');
-      const text = await response.text();
-      const env = {};
-      text.split('\n').forEach(line => {
-        const parts = line.split('=');
-        if (parts.length >= 2) {
-          const key = parts[0].trim();
-          const value = parts.slice(1).join('=').trim().replace(/^['"]|['"]$/g, '');
-          env[key] = value;
-        }
-      });
-      if (env.SUPABASE_URL && env.SUPABASE_ANON_KEY) return env;
-      throw new Error('.env에 필요한 키가 없습니다.');
+      const response = await fetch('/config.js');
+      if (!response.ok) throw new Error('config.js 로드 실패');
+      const script = await response.text();
+      const fn = new Function(script);
+      fn();
+      if (window.SUPABASE_URL && window.SUPABASE_ANON_KEY) {
+        return {
+          SUPABASE_URL: window.SUPABASE_URL,
+          SUPABASE_ANON_KEY: window.SUPABASE_ANON_KEY
+        };
+      }
     } catch (e) {
-      // 3) 하드코딩 fallback
-      console.warn('Using local fallback config for Supabase:', e);
-      return {
-        SUPABASE_URL: "https://sojcpuqpgxwzbntddqky.supabase.co",
-        SUPABASE_ANON_KEY: "sb_publishable_43B2szllehr5fAD5C72cgw_gLAON3Vs"
-      };
+      console.error('Supabase 설정을 로드할 수 없습니다. 서버(node server.js)를 통해 접속해주세요.', e);
     }
+
+    throw new Error('Supabase 환경변수가 설정되지 않았습니다. /config.js를 확인하세요.');
   }
 
   // Initialize Auth & Supabase Client

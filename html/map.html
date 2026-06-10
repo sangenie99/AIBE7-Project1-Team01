@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="../icons/MOTIPE%20favicon.png" />
+    <title>지도</title>
+    <link rel="stylesheet" href="../css/main.css" />
+    <style>
+      /* 지도 페이지 전용 스타일 */
+      .map-header {
+        text-align: center;
+        padding: 50px 20px;
+        background-color: var(--card-bg);
+        margin-bottom: 20px;
+        margin-top: 0;
+        border-radius: 0;
+        width: 100%;
+        border-bottom: 1px solid #ddd;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+      }
+
+      .map-container-wrapper {
+        background-color: var(--card-bg);
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+        margin-bottom: 60px;
+        grid-column: 1 / -1;
+      }
+
+      /* 지도가 들어갈 빈 공간 */
+      #map {
+        width: 100%;
+        height: 600px; /* PC 기준 높이 */
+        background-color: #f0f0f0;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--accent-sepia);
+      }
+
+      #map::before {
+        content: "📍 지도를 불러오는 중이거나 외부 API 설정이 필요합니다.";
+        color: var(--text-light);
+        font-weight: 500;
+      }
+
+      @media (max-width: 768px) {
+        #map {
+          height: 400px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="nav-brand-group">
+        <a href="index.html" class="nav-logo">
+          <img
+            src="../icons/screen.png"
+            alt="Motipe 로고"
+            class="nav-logo-img"
+          />
+        </a>
+        <div class="nav-left">
+          <a href="map.html">지도</a>
+          <a href="community.html">커뮤니티</a>
+        </div>
+      </div>
+
+      <div class="nav-right">
+        <!-- 로그인 전 상태 -->
+        <div id="nav-guest" class="nav-auth-group">
+          <a href="login.html" class="nav-btn-outline">로그인</a>
+          <a href="signup.html" class="nav-btn-outline">회원가입</a>
+        </div>
+
+        <!-- 로그인 후 상태 -->
+        <div id="nav-user" class="nav-auth-group" style="display: none">
+          <a href="mypage.html" class="nav-icon-link">
+            <img
+              src="../icons/mypage-icon.png"
+              alt="마이페이지"
+              class="nav-mypage-img"
+            />
+          </a>
+          <button type="button" id="logout-btn" class="nav-btn-outline">
+            로그아웃
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <section class="map-header">
+      <h2
+        class="font-winter"
+        style="color: var(--secondary-warm); font-size: 2.2rem; margin: 0"
+      >
+        여행 지도
+      </h2>
+      <p style="color: var(--text-main); margin-top: 10px">
+        노을빛 여행자들이 발견한 숨은 안식처들을 확인해보세요.
+      </p>
+    </section>
+
+    <main class="container">
+      <section class="map-container-wrapper">
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+          "
+        >
+          <h3 style="margin: 0; color: var(--text-main)">
+            전국 안식처 둘러보기
+          </h3>
+          <span style="font-size: 0.9rem; color: var(--text-light)"
+            >* 지도를 확대/축소하여 상세 위치를 확인하세요.</span
+          >
+        </div>
+
+        <!-- 지도가 렌더링될 실제 영역 -->
+        <div id="map"></div>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2026 Sunset Glow Travel. 모든 여행이 쉼표가 되길.</p>
+    </footer>
+
+    <!-- 공통 스크립트 (인증 및 내비게이션 상태 관리) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="/config.js"></script>
+    <script src="../js/community.js"></script>
+    <script>
+      // 나중에 외부 지도 API(Kakao, Google, Naver 등) 호출 코드를 여기에 작성하세요.
+    </script>
+  </body>
+</html>

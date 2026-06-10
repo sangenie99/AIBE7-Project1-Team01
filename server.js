@@ -10,12 +10,10 @@ const geminiModel = process.env.GEMINI_MODEL || "gemini-2.5-flash";
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 const supabaseUrl = process.env.SUPABASE_URL || "";
 
+
 // 회원 탈퇴를 위한 supabase 변수 추가 *운성*
-const { createClient } = require("@supabase/supabase-js");
-const supabaseAdmin = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY,
-);
+const { createClient } = require('@supabase/supabase-js');
+const supabaseAdmin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 const htmlDir = path.join(__dirname, "html");
 const cssDir = path.join(__dirname, "css");
@@ -27,13 +25,11 @@ app.get("/config.js", (req, res) => {
   const supabaseUrl = process.env.SUPABASE_URL || "";
   const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || "";
 
-  res
-    .type("application/javascript")
-    .send(
-      `window.SUPABASE_URL=${JSON.stringify(supabaseUrl)};window.SUPABASE_ANON_KEY=${JSON.stringify(
-        supabaseAnonKey,
-      )};`,
-    );
+  res.type("application/javascript").send(
+    `window.SUPABASE_URL=${JSON.stringify(supabaseUrl)};window.SUPABASE_ANON_KEY=${JSON.stringify(
+      supabaseAnonKey
+    )};`
+  );
 });
 
 app.use(express.static(htmlDir));
@@ -44,7 +40,7 @@ app.use("/asset", express.static(assetDir));
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(htmlDir, "index.html"));
+  res.sendFile(path.join(htmlDir, "main.html"));
 });
 
 async function getFestivalData(region, date) {
@@ -105,7 +101,7 @@ async function callAITravelRecommendation(prompt) {
           responseMimeType: "application/json",
         },
       }),
-    },
+    }
   );
 
   if (!response.ok) {
@@ -176,15 +172,9 @@ app.delete("/api/delete-account", async (req, res) => {
     return res.json({ success: true, message: "회원탈퇴가 완료되었습니다." });
 
  } catch (error) {
-    // 1. 서버 터미널 창에 에러 전체(이름, 메시지, 줄번호)를 통째로 찍기
-    console.error("🔥 [디버깅] 탈퇴 처리 중 진짜 에러 발생:", error);
-    
-    // 2. 브라우저로 진짜 에러 메시지를 그대로 던져주기 (임시)
+    console.error("🔥탈퇴 처리 중 에러 발생:", error);
     return res.status(500).json({ 
-      message: error.message, 
-      detail: error.toString(),
-      stack: error.stack 
-    });
+  });
   }
 });
 

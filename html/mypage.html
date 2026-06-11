@@ -419,6 +419,19 @@
           <div class="my-posts-empty">로딩 중...</div>
         </div>
       </section>
+    <!-- 북마크 -->
+      <section class="settings-card">
+        <div class="section-header">
+          <h3>
+            즐겨찾기한 축제
+            <span class="post-count-badge" id="bookmark-count">0</span>
+          </h3>
+          <a href="map.html" class="go-community-btn">지도에서 보기 →</a>
+        </div>
+        <div class="my-posts-list" id="bookmark-list">
+          <div class="my-posts-empty">로딩 중...</div>
+        </div>
+      </section>
 
       <!-- 비밀번호 변경 섹션 -->
       <section class="settings-card password-section">
@@ -667,6 +680,52 @@
         }
       }
 
+      async function renderBookmarks() {
+        const listEl = document.getElementById("bookmark-list");
+        const countEl = document.getElementById("bookmark-count");
+
+        try {
+          const { data, error } = await window.supabaseClient
+            .from("festival_bookmarks")
+            .select(
+              "festival_id, festivals(id, title, start_date, end_date, addr, detail_url)",
+            )
+            .order("created_at", { ascending: false });
+
+          if (error) throw error;
+
+          const bookmarks = data.map((b) => b.festivals).filter(Boolean);
+          countEl.textContent = bookmarks.length;
+
+          if (bookmarks.length === 0) {
+            listEl.innerHTML = `
+              <div class="my-posts-empty">
+                즐겨찾기한 축제가 없습니다.<br>
+                <a href="map.html">지도에서 축제를 찜해보세요! ♡</a>
+              </div>`;
+            return;
+          }
+
+          listEl.innerHTML = bookmarks
+            .map(
+              (f) => `
+            <div class="my-post-item">
+              <div class="my-post-info">
+                <div class="my-post-title">${escapeHtml(f.title)}</div>
+                <div class="my-post-meta">
+                  <span>${f.start_date} ~ ${f.end_date}</span>
+                  ${f.addr ? `<span>${escapeHtml(f.addr.slice(0, 20))}</span>` : ""}
+                </div>
+              </div>
+            </div>
+          `,
+            )
+            .join("");
+        } catch (e) {
+          listEl.innerHTML = `<div class="my-posts-empty">즐겨찾기를 불러오지 못했습니다.</div>`;
+        }
+      }
+
       // ===== 마이페이지 초기화 (community.js 이후 실행) =====
       let _currentUserEmail = null;
 
@@ -688,6 +747,9 @@
 
         // 내 게시글 렌더링
         renderMyPosts(user.id);
+        
+        // 북마크 렌더링
+        renderBookmarks();
       });
 
       // 로그아웃 링크 연결

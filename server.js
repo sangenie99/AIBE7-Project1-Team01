@@ -15,6 +15,15 @@ if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
   process.exit(1); // 서버 실행 중단
 }
 
+// URL 형식 검사
+if (!process.env.SUPABASE_URL.match(/^https?:\/\//i)) {
+  console.error(
+    "❌ 오류: SUPABASE_URL은 'http://' 또는 'https://'로 시작하는 유효한 URL이어야 합니다. 현재 입력된 값:",
+    process.env.SUPABASE_URL,
+  );
+  process.exit(1); // 서버 실행 중단
+}
+
 // 관리자 권한 Supabase 클라이언트 (회원 삭제용)
 const supabaseAdmin = createClient(
   process.env.SUPABASE_URL,

@@ -11,7 +11,7 @@
     "dotenv": "^17.4.2",
     "express": "^4.22.2"
   },
-  "description": "",
+  "description": "사용자의 성향을 분석해 최적화된 지역 축제 및 여행 일정을 추천하는 AI 플랫폼입니다.",
   "main": "server.js",
   "directories": {
     "doc": "docs"
@@ -26,5 +26,8 @@
   "bugs": {
     "url": "https://github.com/pjmoo/AIBE7-Project1-Team01/issues"
   },
-  "homepage": "https://github.com/pjmoo/AIBE7-Project1-Team01#readme"
+  "homepage": "https://github.com/pjmoo/AIBE7-Project1-Team01#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
 }

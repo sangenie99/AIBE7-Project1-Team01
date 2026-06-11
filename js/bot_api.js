@@ -1,11 +1,11 @@
-require('dotenv').config({ path: require('path').join(__dirname, '.env') });
+require('dotenv').config({ path: require('path').join(__dirname, '../.env') });
 const express  = require('express');
 const cors     = require('cors');
 const path     = require('path');
 const axios    = require('axios');
 const { createClient } = require('@supabase/supabase-js');
 const Groq     = require('groq-sdk');
-const { fetchTourData, CONTENT_TYPE } = require('./services/tourApi');
+const { fetchTourData, CONTENT_TYPE } = require('./tourApi');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -22,7 +22,6 @@ const groq = process.env.GROQ_API_KEY
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
 
 // ==========================================================================
 // 🗺️  지역명 → 기상청 격자 변환 테이블

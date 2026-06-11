@@ -97,14 +97,12 @@
           style="
             background-image:
               linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2)),
-              url(&quot;https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80&quot;);
+              url(&quot;../icons/festival2.jpg&quot;);
           "
         >
           <div class="slide-content">
-            <h2 class="font-winter">따스한 햇살이 머무는 곳으로</h2>
-            <p>인위적인 것들을 뒤로하고 자연의 속도에 맞춰 걷는 시간</p>
-            <br />
-            <a href="#" class="cta-button">여정 시작하기</a>
+            <h2 class="font-travel">탈을 쓰고 춤을 추는 당신</h2>
+            <p>안동에서 가슴속에 꿈틀대는 신명을 깨우세요 </p>
           </div>
         </div>
         <div
@@ -112,14 +110,12 @@
           style="
             background-image:
               linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2)),
-              url(&quot;https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1200&q=80&quot;);
+              url(&quot;../icons/festival1.jpg&quot;);
           "
         >
           <div class="slide-content">
-            <h2 class="font-winter">바람 소리마저 숲이 되는 길</h2>
-            <p>피톤치드 가득한 깊은 숲속에서 찾는 내 마음의 쉼표</p>
-            <br />
-            <a href="#" class="cta-button" data-keyword="숲">여정 시작하기</a>
+            <h2 class="font-travel">흩날리는 벚꽃잎 아래서</h2>
+            <p>진해 군항제에서 만나는 봄의 눈부신 순간들</p>
           </div>
         </div>
         <div
@@ -127,44 +123,12 @@
           style="
             background-image:
               linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2)),
-              url(&quot;https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80&quot;);
+              url(&quot;../icons/festival3.jpg&quot;);
           "
         >
           <div class="slide-content">
-            <h2 class="font-winter">노을빛이 스며드는 바다</h2>
-            <p>어둠이 내리기 전 가장 찬란하게 빛나는 순간을 함께하세요</p>
-            <br />
-            <a href="#" class="cta-button">여정 시작하기</a>
-          </div>
-        </div>
-        <div
-          class="slide"
-          style="
-            background-image:
-              linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2)),
-              url(&quot;https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?auto=format&fit=crop&w=1200&q=80&quot;);
-          "
-        >
-          <div class="slide-content">
-            <h2 class="font-winter">별빛이 흐르는 밤하늘</h2>
-            <p>쏟아질 듯한 우주의 신비로움을 가만히 느껴보는 깊은 밤</p>
-            <br />
-            <a href="#" class="cta-button">여정 시작하기</a>
-          </div>
-        </div>
-        <div
-          class="slide"
-          style="
-            background-image:
-              linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2)),
-              url(&quot;https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1200&q=80&quot;);
-          "
-        >
-          <div class="slide-content">
-            <h2 class="font-winter">소박한 골목길의 속삭임</h2>
-            <p>천천히 거닐며 발견하는 낡은 이정표와 작은 들꽃들의 이야기</p>
-            <br />
-            <a href="#" class="cta-button">여정 시작하기</a>
+            <h2 class="font-travel">화려한 불꽃이 피어나는 밤바다</h2>
+            <p>부산 불꽃축제, 바다 위에서 펼쳐지는 낭만적인 시간</p>
           </div>
         </div>
       </div>
@@ -243,7 +207,7 @@
         class="ai-bot-frame"
         title="Motipe AI 여행 추천"
         src="about:blank"
-        data-src="/bot/"
+        data-src="bot.html"
         loading="lazy"
         referrerpolicy="no-referrer"
       ></iframe>
@@ -323,18 +287,45 @@
           currentIndex = index;
         }
 
-        // 1장당 가로 폭인 -20% 단위로 곱해서 컨테이너를 통째로 밀어줍니다.
-        wrapper.style.transform = `translateX(-${currentIndex * 20}%)`;
+        // 1장당 가로 폭인 -100% 단위로 곱해서 컨테이너를 통째로 밀어줍니다.
+        wrapper.style.transform = `translateX(-${currentIndex * 100}%)`;
       }
 
       // 버튼 클릭 이벤트 리스너 설정
       prevBtn.addEventListener("click", () => {
         moveSlide(currentIndex - 1);
+        resetAutoSlide();
       });
 
       nextBtn.addEventListener("click", () => {
         moveSlide(currentIndex + 1);
+        resetAutoSlide();
       });
+
+      // 자동 슬라이드 로직
+      let slideInterval;
+      
+      function startAutoSlide() {
+        slideInterval = setInterval(() => {
+          moveSlide(currentIndex + 1);
+        }, 4000);
+      }
+
+      function stopAutoSlide() {
+        clearInterval(slideInterval);
+      }
+
+      function resetAutoSlide() {
+        stopAutoSlide();
+        startAutoSlide();
+      }
+
+      // 슬라이더 영역에 마우스가 올라가면 자동 슬라이드 멈춤
+      wrapper.addEventListener("mouseenter", stopAutoSlide);
+      wrapper.addEventListener("mouseleave", startAutoSlide);
+
+      // 페이지 진입 시 자동 슬라이드 시작
+      startAutoSlide();
 
       // ============================================
       // 검색 로직 추가 (DESIGN.md 준수)

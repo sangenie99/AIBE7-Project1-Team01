@@ -582,6 +582,42 @@ article h3 {
   padding: 20px;
 }
 
+.post-content h3 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 10px 0 5px 0;
+  font-size: 1.2rem;
+  color: var(--secondary-warm);
+}
+
+.post-content p {
+  max-height: 80px;
+  overflow-y: auto;
+  line-height: 1.6;
+  margin-top: 10px;
+  transition: max-height 0.3s ease;
+}
+
+.post-card.expanded .post-content h3 {
+  white-space: normal;
+  overflow: visible;
+}
+
+.post-card.expanded .post-content p {
+  max-height: 2000px;
+  overflow-y: visible;
+}
+
+/* 스크롤바 디자인 (웹킷 브라우저 용) */
+.post-content p::-webkit-scrollbar {
+  width: 6px;
+}
+.post-content p::-webkit-scrollbar-thumb {
+  background-color: var(--accent-sepia);
+  border-radius: 4px;
+}
+
 .post-meta {
   font-size: 0.85rem;
   color: var(--text-light);

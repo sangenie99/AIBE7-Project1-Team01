@@ -116,6 +116,46 @@ header p {
   color: white !important;
 }
 
+/*[수정사항] 내비게이션 버튼 변경
+   - 회원가입 버튼 삭제(각 HTML 및 community.js fallback nav에서 제거).
+   - 로그인 버튼 → 외곽선 버튼(.nav-btn-outline) 박스 제거, 테두리 없는 텍스트 링크로 변경.
+   - 색상: 검정(#000).
+   - 크기: 기존 nav 폰트(0.95rem) 대비 약 3pt 확대 → 1.2rem.
+   - hover: 밑줄(underline-offset 4px) 표시.
+   - display:inline-flex / gap:6px 는 로그인 아이콘과 텍스트를 한 줄로 묶기 위함.
+   ──────────────────────────────────────────────────────────── */
+.nav-login-link {
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #000 !important;
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-login-link:hover {
+  color: #000 !important;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* [수정사항] 로그인 링크에 유저 아이콘 추가 (인터파크 NOL 로그인 옆 SVG 참고)
+   - 로그인 텍스트와 동일한 크기(1em = 1.2rem)로 맞춤.
+   - SVG는 currentColor 사용 → 텍스트 색상(검정)과 동일하게 표시. */
+.nav-login-icon {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+  display: block;
+}
+
+
 .nav-icon-link {
   display: flex;
   align-items: center;

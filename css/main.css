@@ -21,9 +21,21 @@
   font-display: swap;
 }
 
-/* 눈꽃 폰트 클래스 추가 */
 .font-winter {
-  font-family: "HsWinterSnowflake20", sans-serif;
+  font-family: "HsWinterSnowflake20", sans-serif !important;
+}
+
+@font-face {
+  font-family: "GowunDodum";
+  font-style: normal;
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunDodum-Regular.woff")
+    format("woff");
+  font-weight: normal;
+  font-display: swap;
+}
+
+.font-travel {
+  font-family: "GowunDodum", sans-serif !important;
 }
 
 * {

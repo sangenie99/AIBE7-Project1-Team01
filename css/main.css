@@ -26,6 +26,25 @@
 }
 
 @font-face {
+  font-family: "MaruBuri";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10-21@1.0/MaruBuri-Regular.woff") format("woff");
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: "MaruBuri";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-10-21@1.0/MaruBuri-Bold.woff") format("woff");
+  font-weight: 700;
+  font-display: swap;
+}
+
+.font-sunset {
+  font-family: "MaruBuri", "Pretendard", serif !important;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+@font-face {
   font-family: "GowunDodum";
   font-style: normal;
   src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunDodum-Regular.woff")

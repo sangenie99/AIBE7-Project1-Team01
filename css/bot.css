@@ -39,11 +39,10 @@ body {
 
 /* ── 채팅 영역 ─────────────────────────────────────────────────── */
 .chat-section {
-    width: 45%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     background: #ffffff;
-    border-right: 1px solid var(--line);
 }
 
 /* 고급스러운 브랜드 헤더 */
@@ -75,10 +74,10 @@ body {
     box-shadow: 0 6px 16px rgba(232, 179, 57, 0.45);
 }
 .brand-title {
-    font-family: 'Playfair Display', 'Noto Sans KR', serif;
-    font-weight: 900;
-    font-size: 30px;
-    letter-spacing: 4px;
+    font-family: 'Cormorant Garamond', 'Noto Sans KR', serif;
+    font-weight: 700;
+    font-size: 32px;
+    letter-spacing: 5px;
     line-height: 1.1;
     background: linear-gradient(90deg, #ffffff 0%, var(--gold-soft) 100%);
     -webkit-background-clip: text;
@@ -92,11 +91,12 @@ body {
     letter-spacing: 2px;
 }
 .brand-tagline {
-    margin-top: 4px;
-    font-size: 12.5px;
+    margin-top: 5px;
+    font-family: 'Gowun Batang', 'Noto Sans KR', serif;
+    font-size: 13px;
     font-weight: 400;
-    letter-spacing: 0.3px;
-    color: rgba(255, 255, 255, 0.82);
+    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.85);
 }
 
 .chat-box { flex: 1; padding: 22px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; background: linear-gradient(180deg, #fffdfa, #fbf7f0); }

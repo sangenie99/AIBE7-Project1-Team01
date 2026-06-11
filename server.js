@@ -75,9 +75,40 @@ app.delete("/api/delete-account", async (req, res) => {
       await supabaseAdmin.auth.admin.deleteUser(userId);
     if (deleteError) throw deleteError;
 
-    res.json({ message: "계정 및 모든 데이터가 성공적으로 삭제되었습니다." });
+  res.json({ message: "계정 및 모든 데이터가 성공적으로 삭제되었습니다." });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+});
+
+// 회원가입 시 public.users 프로필 생성 API
+app.post("/api/create-user-profile", async (req, res) => {
+  try {
+    const { id, email, nickname } = req.body;
+
+    if (!id || !email) {
+      return res.status(400).json({ message: "id와 email은 필수입니다." });
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from("users")
+      .upsert(
+        {
+          id,
+          email,
+          nickname: nickname || email.split("@")[0],
+        },
+        { onConflict: "id" }
+      );
+
+    if (error) {
+      throw error;
+    }
+
+    res.json({ message: "유저 프로필이 저장되었습니다.", data });
+  } catch (error) {
+    console.error("create-user-profile error:", error);
+    res.status(500).json({ message: error.message || "유저 프로필 저장 실패" });
   }
 });
 

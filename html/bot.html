@@ -6,7 +6,7 @@
     <title>MOTIPE AI - 대화형 축제 · 여행 추천</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/bot.css">
 </head>
 <body>
@@ -29,43 +29,6 @@
                 <button onclick="sendMessage()">전송</button>
             </div>
         </div>
-
-        <div class="dashboard-section">
-            <h2 class="dashboard-title">🧭 나의 여행 매니저</h2>
-            
-            <div class="card">
-                <h3>📌 추천된 여행지 바로 임시 저장 (Scrap)</h3>
-                <div id="recommendation-container">추천된 축제가 이곳에 표시됩니다.</div>
-            </div>
-
-            <div class="card">
-                <h3>❤️ 내가 스크랩한 축제 목록</h3>
-                <ul id="savedList"></ul>
-            </div>
-
-            <div class="card">
-                <h3>✈️ 나의 과거 여행 이력 관리</h3>
-                <div class="history-form">
-                    <input type="text" id="histName" placeholder="여행지명">
-                    <input type="date" id="histDate">
-                    <button onclick="addHistory()">기록 추가</button>
-                </div>
-                <ul id="history-list"></ul>
-            </div>
-
-            <div class="card planner-photo-card">
-                <h3>🗺️ 추천 여행지 사진</h3>
-                <div class="photo-box">
-                    <div id="photo-loading" class="photo-loading">📸 이미지를 불러오는 중...</div>
-                    <img id="planner-img" src="" alt="추천 여행지 사진" class="planner-img" />
-                </div>
-                <p id="unsplash-credit" class="photo-credit">
-                    Photo by <a id="author-link" href="#" target="_blank"></a> on Unsplash
-                </p>
-            </div>
-        </div>
-    </div>
-    
 
     <script src="../js/bot.js"></script>
 </body>

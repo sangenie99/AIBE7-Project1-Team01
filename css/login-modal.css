@@ -1,0 +1,280 @@
+/* login-modal.css - 로그인 팝업(모달) 스타일
+   ────────────────────────────────────────────────────────────
+   [수정사항] 로그인 방식 변경: 페이지 이동(login.html) → 팝업(모달)
+   - 기존 login.css의 브랜드 디자인(컬러 #885210, 입력 폼, Google 버튼)을 재사용.
+   - 오버레이 + 중앙 카드, 열기/닫기 트랜지션, 배경 스크롤 잠금(body.login-modal-open) 포함.
+   - 모달 HTML/제어 로직은 js/community.js 에서 동적 주입.
+   ──────────────────────────────────────────────────────────── */
+
+.login-modal-overlay {
+  --brand-primary: #885210;
+  --brand-primary-hover: #6d4109;
+  --brand-bg: #fcf9f2;
+  --brand-surface: #ffffff;
+  --brand-text: #1c1c18;
+  --brand-muted: #524439;
+  --brand-border: #e2ded0;
+
+  position: fixed;
+  inset: 0;
+  z-index: 1080;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background: rgba(28, 28, 24, 0.55);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.login-modal-overlay.is-open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.login-modal {
+  width: 100%;
+  max-width: 26rem;
+  max-height: calc(100vh - 2.5rem);
+  overflow-y: auto;
+  background: var(--brand-surface);
+  border-radius: 1.25rem;
+  box-shadow: 0 24px 60px rgba(28, 28, 24, 0.25);
+  padding: 2.25rem 2rem;
+  font-family: "Be Vietnam Pro", sans-serif;
+  color: var(--brand-text);
+  transform: translateY(12px) scale(0.98);
+  transition: transform 0.2s ease;
+  position: relative;
+}
+
+.login-modal-overlay.is-open .login-modal {
+  transform: translateY(0) scale(1);
+}
+
+.login-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  border: none;
+  border-radius: 50%;
+  background: var(--brand-surface-soft, #f6f3ec);
+  color: var(--brand-muted);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.login-modal-close:hover {
+  background: #ece6da;
+  color: var(--brand-text);
+}
+
+.login-modal-header {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.login-modal-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin: 0 0 0.35rem;
+  color: var(--brand-text);
+}
+
+.login-modal-subtitle {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--brand-muted);
+}
+
+.login-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.login-modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.login-modal-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--brand-muted);
+}
+
+.login-modal-input {
+  width: 100%;
+  border: 1px solid var(--brand-border);
+  border-radius: 0.6rem;
+  padding: 0.8rem 1rem;
+  font-size: 0.95rem;
+  color: var(--brand-text);
+  background: #fff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.login-modal-input:focus {
+  outline: none;
+  border-color: var(--brand-primary);
+  box-shadow: 0 0 0 0.2rem rgba(136, 82, 16, 0.15);
+}
+
+.login-modal-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-size: 0.875rem;
+}
+
+.login-modal-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--brand-muted);
+  cursor: pointer;
+}
+
+.login-modal-check input {
+  accent-color: var(--brand-primary);
+  width: 1rem;
+  height: 1rem;
+}
+
+.login-modal-link {
+  color: var(--brand-muted);
+  text-decoration: none;
+}
+
+.login-modal-link:hover {
+  color: var(--brand-primary);
+  text-decoration: underline;
+}
+
+.login-modal-submit {
+  width: 100%;
+  border: none;
+  border-radius: 0.6rem;
+  background: var(--brand-primary);
+  color: #fff;
+  padding: 0.9rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.login-modal-submit:hover {
+  background: var(--brand-primary-hover);
+}
+
+.login-modal-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.login-modal-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.25rem 0 1rem;
+  color: #7a6a58;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.login-modal-divider::before,
+.login-modal-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: #e1d7c8;
+}
+
+.login-modal-google {
+  width: 100%;
+  height: 50px;
+  border-radius: 0.6rem;
+  border: 1px solid #ddd2c2;
+  background: #fff;
+  color: #2f2923;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.login-modal-google:hover {
+  background: #faf7f2;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(92, 59, 25, 0.12);
+}
+
+.login-modal-google-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid #dadce0;
+  background: #fff;
+  color: #4285f4;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.login-modal-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--brand-muted);
+}
+
+.login-modal-footer a {
+  color: var(--brand-primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.login-modal-footer a:hover {
+  text-decoration: underline;
+}
+
+.login-modal-spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-top-color: #fff;
+  border-radius: 50%;
+  vertical-align: -2px;
+  margin-right: 0.4rem;
+  animation: login-modal-spin 0.8s linear infinite;
+}
+
+@keyframes login-modal-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 모달 열렸을 때 배경 스크롤 잠금 */
+body.login-modal-open {
+  overflow: hidden;
+}

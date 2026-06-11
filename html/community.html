@@ -193,9 +193,17 @@
       </div>
       <div class="nav-right">
         <!-- 로그인 전 상태 -->
+        <!-- [수정사항] 회원가입 버튼 삭제 / 로그인은 텍스트형 링크(.nav-login-link)로 변경.
+             유저 아이콘 SVG + "로그인" 텍스트를 하나의 링크로 묶음.
+             클릭 시 community.js가 가로채 페이지 이동 대신 로그인 팝업(모달)을 띄움. -->
         <div id="nav-guest" class="nav-auth-group">
-          <a href="login.html" class="nav-btn-outline">로그인</a>
-          <a href="signup.html" class="nav-btn-outline">회원가입</a>
+          <a href="login.html" class="nav-login-link">
+            <svg class="nav-login-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M4 21a8 8 0 0 1 16 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>로그인</span>
+          </a>
         </div>
 
         <!-- 로그인 후 상태 (기본적으로 숨김) -->
@@ -213,6 +221,7 @@
         </div>
       </div>
     </nav>
+
 
     <section class="community-header">
       <h2

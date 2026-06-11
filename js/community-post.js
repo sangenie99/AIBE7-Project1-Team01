@@ -576,7 +576,7 @@
       </div>` : "";
 
     return `
-      <article class="post-card" data-category="${escapeHtml(post.category)}">
+      <article class="post-card" data-category="${escapeHtml(post.category)}" onclick="togglePost(event, this)" style="cursor: pointer;">
         ${imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="포스트 이미지" class="post-image" onerror="this.style.display='none'" />` : ""}
         <div class="post-content">
           <div class="post-meta">
@@ -605,6 +605,13 @@
     renderPosts();
   }
 
+  function togglePost(event, card) {
+    if (event.target.tagName === 'BUTTON' || event.target.closest('button')) {
+      return;
+    }
+    card.classList.toggle('expanded');
+  }
+
   // ============================================================
   // 전역 노출 (HTML의 onclick에서 호출)
   // ============================================================
@@ -617,6 +624,7 @@
   window.closeConfirm    = closeConfirm;
   window.confirmDelete   = confirmDelete;
   window.filterPosts     = filterPosts;
+  window.togglePost      = togglePost;
   window.renderPosts     = renderPosts;
   window.openEditModal   = openEditModal;
   window.closeEditModal  = closeEditModal;

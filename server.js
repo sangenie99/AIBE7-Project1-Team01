@@ -183,7 +183,7 @@ app.post("/api/travel-chat", async (req, res) => {
 });
 
 // 봇 모듈 마운트
-const botApp = require("./bot/server.js");
+const botApp = require("./js/bot_api.js");
 app.use("/bot", botApp);
 
 // 정적 파일 서비스 (현재 폴더의 모든 파일 서빙)

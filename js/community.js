@@ -357,5 +357,6 @@
   // Auto-run when DOM content has loaded
   document.addEventListener("DOMContentLoaded", () => {
     window.initAuth();
+    interceptLoginLinks();
   });
 })();

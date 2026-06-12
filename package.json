@@ -2,7 +2,23 @@
   "name": "motipe",
   "version": "1.0.0",
   "private": true,
+  "description": "사용자의 성향을 분석해 최적화된 지역 축제 및 여행 일정을 추천하는 AI 플랫폼입니다.",
+  "keywords": [],
+  "homepage": "https://github.com/pjmoo/AIBE7-Project1-Team01#readme",
+  "bugs": {
+    "url": "https://github.com/pjmoo/AIBE7-Project1-Team01/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pjmoo/AIBE7-Project1-Team01.git"
+  },
+  "license": "ISC",
+  "author": "",
   "type": "commonjs",
+  "main": "server.js",
+  "directories": {
+    "doc": "docs"
+  },
   "scripts": {
     "start": "node server.js"
   },
@@ -14,22 +30,6 @@
     "express": "^4.22.2",
     "groq-sdk": "^1.2.1"
   },
-  "description": "사용자의 성향을 분석해 최적화된 지역 축제 및 여행 일정을 추천하는 AI 플랫폼입니다.",
-  "main": "server.js",
-  "directories": {
-    "doc": "docs"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/pjmoo/AIBE7-Project1-Team01.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/pjmoo/AIBE7-Project1-Team01/issues"
-  },
-  "homepage": "https://github.com/pjmoo/AIBE7-Project1-Team01#readme",
   "devDependencies": {
     "nodemon": "^3.1.14"
   }

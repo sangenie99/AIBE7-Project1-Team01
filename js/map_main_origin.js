@@ -22,7 +22,7 @@ import {
 } from "./map_ui.js";
 
 const state = {
-  period: "all",
+  period: "ongoing",
   areaCode: "",
   category: "",
   dateFrom: "",
@@ -30,7 +30,7 @@ const state = {
 };
 
 let allFestivals = [];
-let myBookmarks = new Set();
+let myBookmarks = new Set(); // 내 즐겨찾기 festival_id 목록
 
 async function load() {
   showLoading(true);
@@ -77,6 +77,7 @@ function onCardClick(festival) {
 
 async function onBookmarkToggle(festivalId, btn) {
   const isBookmarked = myBookmarks.has(festivalId);
+
   if (isBookmarked) {
     const { error } = await removeBookmark(festivalId);
     if (!error) {
@@ -96,20 +97,6 @@ async function onBookmarkToggle(festivalId, btn) {
       btn.classList.add("bookmarked");
     }
   }
-}
-
-// ===== 거리 계산 (Haversine 공식, 단위: km) =====
-function getDistance(lat1, lng1, lat2, lng2) {
-  const R = 6371;
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLng = ((lng2 - lng1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLng / 2) *
-      Math.sin(dLng / 2);
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 // ===== 검색 =====
@@ -144,78 +131,17 @@ function handleSearch() {
       },
       (place) => {
         panToPlace(place);
-
-        // 선택한 장소 반경 20km 이내 축제 필터링
-        const nearby = allFestivals.filter((f) => {
-          if (!f.lat || !f.lng) return false;
-          return (
-            getDistance(
-              parseFloat(place.y),
-              parseFloat(place.x),
-              f.lat,
-              f.lng,
-            ) <= 20
-          );
-        });
-
-        // 리스트 상단에 "주변 축제" 표시
-        updateListSubtitle(
-          `📍 ${place.place_name} 주변 축제 (${nearby.length}개)`,
-        );
-        renderList(nearby, onCardClick, myBookmarks, onBookmarkToggle);
-
         if (window.innerWidth <= 768) switchTab("map");
       },
     );
   });
 }
 
-// 필터 뱃지 업데이트 함수 추가
-function updateFilterBadge() {
-  const btn = document.getElementById("map-filter-btn");
-  let count = 0;
-  if (state.areaCode) count++;
-  if (state.period !== "all") count++;
-
-  if (count > 0) {
-    btn.innerHTML = `
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="4" y1="6" x2="20" y2="6"/>
-        <line x1="8" y1="12" x2="16" y2="12"/>
-        <line x1="11" y1="18" x2="13" y2="18"/>
-      </svg>
-      필터 <span class="filter-badge">${count}</span>`;
-  } else {
-    btn.innerHTML = `
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="4" y1="6" x2="20" y2="6"/>
-        <line x1="8" y1="12" x2="16" y2="12"/>
-        <line x1="11" y1="18" x2="13" y2="18"/>
-      </svg>
-      필터`;
-  }
-}
-
-function updateListSubtitle(text) {
-  const el = document.getElementById("list-subtitle");
-  if (el) el.textContent = text;
-}
-
-// ===== 필터 버튼 토글 =====
-document.getElementById("map-filter-btn").addEventListener("click", () => {
-  const panel = document.getElementById("map-filter-panel");
-  const btn = document.getElementById("map-filter-btn");
-  const isHidden = panel.classList.contains("hidden");
-  panel.classList.toggle("hidden", !isHidden);
-  btn.classList.toggle("active", isHidden);
-});
-
 // ===== 필터 이벤트 =====
 document.getElementById("filter-area").addEventListener("change", (e) => {
   state.areaCode = e.target.value;
   resetSearchUI();
   load();
-  updateFilterBadge();
 });
 
 document.getElementById("filter-period").addEventListener("click", (e) => {
@@ -236,7 +162,6 @@ document.getElementById("filter-period").addEventListener("click", (e) => {
     state.dateTo = "";
     resetSearchUI();
     load();
-    updateFilterBadge();
   }
 });
 
@@ -254,6 +179,12 @@ document.getElementById("filter-date-to").addEventListener("change", (e) => {
     resetSearchUI();
     load();
   }
+});
+
+document.getElementById("filter-category").addEventListener("change", (e) => {
+  state.category = e.target.value;
+  resetSearchUI();
+  load();
 });
 
 // ===== 모바일 탭 =====
